@@ -140,5 +140,9 @@
 ;; P17 split a list into two parts
 (defn split [lst n]
   (list (take n lst) (drop n lst)))
+
+;; P18 extract a slice from a list
+(defn slice [lst i n]
+  (take (inc (- n i)) (drop (dec i) lst)))
 	      
 		
