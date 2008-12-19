@@ -127,5 +127,14 @@
 ;; P15 Replicate the elements of a list a given number of times
 (defn repli [lst n]
   (mapcat (fn [x] (replicate n x)) lst))
+
+;; P16 Drop every nth element from a list
+(defn drop-nth [lst n]
+  ((fn [xs i accum]
+     (if (= nil xs)
+       accum
+       (if (= 0 (rem i n))
+	 (recur (rest xs) (inc i) accum)
+	 (recur (rest xs) (inc i) (concat accum (list (first xs))))))) lst 1 nil))
 	      
 		
