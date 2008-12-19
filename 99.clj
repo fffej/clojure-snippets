@@ -119,5 +119,13 @@
 		(if (= 1 (count items))
 		  (concat accum items)
 		  (concat accum (list (list (count items) (first items))))))))) lst nil))
+
+;; P14 Duplicate the elements of a list
+(defn dupli [lst]
+  (mapcat (fn [x] (list x x)) lst))
+
+;; P15 Replicate the elements of a list a given number of times
+(defn repli [lst n]
+  (mapcat (fn [x] (replicate n x)) lst))
 	      
 		
