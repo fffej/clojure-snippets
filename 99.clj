@@ -136,5 +136,9 @@
        (if (= 0 (rem i n))
 	 (recur (rest xs) (inc i) accum)
 	 (recur (rest xs) (inc i) (concat accum (list (first xs))))))) lst 1 nil))
+
+;; P17 split a list into two parts
+(defn split [lst n]
+  (list (take n lst) (drop n lst)))
 	      
 		
