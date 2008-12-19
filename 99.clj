@@ -109,10 +109,15 @@
 		(concat accum (replicate (ffirst xs) (first (rfirst xs))))
 		(concat accum (list (first xs))))))) lst nil))
 
+;; P13 encode it directly
 (defn encode-direct [lst]
   ((fn [xs accum]
      (if (= nil xs)
        accum
        (recur (drop-while (fn [x] (= x (first xs))) xs)
+	      (let [items (take-while (fn [x] (= x (first xs))) xs)]
+		(if (= 1 (count items))
+		  (concat accum items)
+		  (concat accum (list (list (count items) (first items))))))))) lst nil))
 	      
 		
