@@ -144,5 +144,34 @@
 ;; P18 extract a slice from a list
 (defn slice [lst i n]
   (take (inc (- n i)) (drop (dec i) lst)))
-	      
-		
+
+;; P19 Rotate a list N places to the left
+(defn rotate [lst n]
+  (if (> n 0)
+    (take (count lst) (drop n (cycle lst)))
+    (take (count lst) (drop (- (count lst) (Math/abs n)) (cycle lst)))))
+
+;; P20 Remove the kth element from the list
+(defn remove-at [lst n]
+  (concat (take (dec n) lst) (drop n lst)))
+
+;; P21 - Insert an element at a given position into a list
+(defn insert-at [lst elt n]
+  (concat (take (dec n) lst) (list elt) (drop (dec n) lst)))
+
+;; P22 - Create a list containing all integers within a given range
+(defn my-range-lazy [start end]
+  (when (< start end)
+    (lazy-cons start (my-range-lazy (inc start) end))))
+
+(defn my-range [start end]
+  (if (> start end)
+    (reverse (my-range-lazy end start))
+    (my-range-lazy start end)))
+
+;; P23 - Extract a given number of randomly selected elements from a list
+;; Annoying inc / dec because remove-at is 1 based!
+(defn rnd-select [lst n]
+  (when (> n 0)
+    (let [x (rand-int (count lst))]
+      (lazy-cons (nth lst x) (rnd-select (remove-at lst (inc x)) (dec n))))))
