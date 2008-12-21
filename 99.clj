@@ -175,3 +175,8 @@
   (when (> n 0)
     (let [x (rand-int (count lst))]
       (lazy-cons (nth lst x) (rnd-select (remove-at lst (inc x)) (dec n))))))
+
+;; P24 Select N different frombers from the set 1..m
+(defn lotto-select [n rng]
+  (rnd-select (range 1 rng) n))
+     
