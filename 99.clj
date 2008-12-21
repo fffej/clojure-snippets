@@ -179,4 +179,11 @@
 ;; P24 Select N different frombers from the set 1..m
 (defn lotto-select [n rng]
   (rnd-select (range 1 rng) n))
+
+;; P25 permute a list
+(defn rnd-permu [lst]
+  (let [length (count lst)]
+    (when (> length 0)
+      (let [x (rand-int length)]
+	(lazy-cons (nth lst x) (rnd-permu (remove-at lst (inc x))))))))
      
