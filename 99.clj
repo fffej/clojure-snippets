@@ -187,3 +187,14 @@
       (let [x (rand-int length)]
 	(lazy-cons (nth lst x) (rnd-permu (remove-at lst (inc x))))))))
      
+;; P26 - Generate the combinations of K distinct objects chosen from N
+;; Define recursively
+(defn tails [lst]
+  (if (= nil lst)
+    (list nil)
+    (lazy-cons lst (tails (rest lst)))))
+
+(defn combo-helper [n lst]
+  (if (nil? lst)
+    nil
+    (concat (list (concat n (list (first lst)))) (combo-helper n (rest lst)))))
