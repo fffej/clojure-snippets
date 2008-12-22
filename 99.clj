@@ -198,3 +198,11 @@
   (if (nil? lst)
     nil
     (concat (list (concat n (list (first lst)))) (combo-helper n (rest lst)))))
+
+(defn combination [n lst]
+  (if (> n (count lst))
+    nil
+    (let [elem-list (split lst (dec n)) rlist (nthrest lst (dec n))]
+      (concat (combo-helper (first elem-list) rlist) (combination n (rest lst))))))
+    
+    
