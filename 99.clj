@@ -189,20 +189,13 @@
      
 ;; P26 - Generate the combinations of K distinct objects chosen from N
 ;; Define recursively
-(defn tails [lst]
-  (if (= nil lst)
-    (list nil)
-    (lazy-cons lst (tails (rest lst)))))
-
-(defn combo-helper [n lst]
-  (if (nil? lst)
-    nil
-    (concat (list (concat n (list (first lst)))) (combo-helper n (rest lst)))))
+(defn append-prefix [prefix lst-elements]
+  (mapcat (fn [x] (list (concat prefix (list x)))) lst-elements))
 
 (defn combination [n lst]
   (if (> n (count lst))
     nil
     (let [elem-list (split lst (dec n)) rlist (nthrest lst (dec n))]
-      (concat (combo-helper (first elem-list) rlist) (combination n (rest lst))))))
+      (concat (append-prefix (first elem-list) rlist) (combination n (rest lst))))))
     
     
