@@ -209,7 +209,13 @@
 
 ;; No idea where 29-3o are!
 
-;; P31 
+;; P31 Simple test for prime numbers
 (defn isprime [p]
   (and (> p 1)
        (every? (fn [x] (not (zero? (rem p x)))) (range 2 (inc (Math/sqrt p))))))
+
+;; P32 Write the GCD algorithm for two positive numbers
+(defn gcd [a b]
+  (if (zero? b)
+    a
+    (recur b (rem a b))))
