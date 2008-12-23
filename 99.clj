@@ -219,3 +219,6 @@
   (if (zero? b)
     a
     (recur b (rem a b))))
+
+(defn coprime [a b]
+  (= (gcd a b) 1))
