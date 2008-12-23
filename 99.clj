@@ -222,3 +222,8 @@
 
 (defn coprime [a b]
   (= (gcd a b) 1))
+
+(defn totient [x]
+  (if (= x 1)
+    1
+    (count (filter (partial coprime x) (range 1 x)))))
