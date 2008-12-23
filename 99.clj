@@ -214,6 +214,27 @@
   (and (> p 1)
        (every? (fn [x] (not (zero? (rem p x)))) (range 2 (inc (Math/sqrt p))))))
 
+(defn sieve [x]
+  (filter isprime (range 1 x)))
+
+;;; Side track into Sieve algorithm with examples from LtU
+(defn diff [lx ly]
+  (if (nil? lx)
+    ly
+    (if (nil? ly)
+      lx
+      (if (= (first lx) (first ly))
+	(diff (rest lx) (rest ly))
+	(if (< (first lx) (first ly))
+	  (lazy-cons (first lx) (diff (rest lx) ly))
+	  (lazy-cons lx (rest ly)))))))
+
+(defn merge-lst [lx ly])
+	  
+
+     
+
+
 ;; P32 Write the GCD algorithm for two positive numbers
 (defn gcd [a b]
   (if (zero? b)
