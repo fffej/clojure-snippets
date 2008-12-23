@@ -206,4 +206,10 @@
 ;; P28 Sorting a list of lists according to length of sublists
 (defn lsort [lst]
   (sort (fn [x y] (< (count x) (count y))) lst))
-    
+
+;; No idea where 29-3o are!
+
+;; P31 
+(defn isprime [p]
+  (and (> p 1)
+       (every? (fn [x] (not (zero? (rem p x)))) (range 2 (inc (Math/sqrt p))))))
