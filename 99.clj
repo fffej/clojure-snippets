@@ -197,5 +197,13 @@
     nil
     (let [elem-list (split lst (dec n)) rlist (nthrest lst (dec n))]
       (concat (append-prefix (first elem-list) rlist) (combination n (rest lst))))))
-    
+
+;; P27 Group elements into disjoint subsets
+;; Multinomial Coefficients
+(defn group3 [lst sizes]
+  (prn "Come back to this one!"))
+
+;; P28 Sorting a list of lists according to length of sublists
+(defn lsort [lst]
+  (sort (fn [x y] (< (count x) (count y))) lst))
     
