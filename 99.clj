@@ -212,28 +212,10 @@
 ;; P31 Simple test for prime numbers
 (defn isprime [p]
   (and (> p 1)
-       (every? (fn [x] (not (zero? (rem p x)))) (range 2 (inc (Math/sqrt p))))))
+       (every? (fn [x] (not (zero? (rem p x)))) (range 2 p))))
 
 (defn sieve [x]
   (filter isprime (range 1 x)))
-
-;;; Side track into Sieve algorithm with examples from LtU
-(defn diff [lx ly]
-  (if (nil? lx)
-    ly
-    (if (nil? ly)
-      lx
-      (if (= (first lx) (first ly))
-	(diff (rest lx) (rest ly))
-	(if (< (first lx) (first ly))
-	  (lazy-cons (first lx) (diff (rest lx) ly))
-	  (lazy-cons lx (rest ly)))))))
-
-(defn merge-lst [lx ly])
-	  
-
-     
-
 
 ;; P32 Write the GCD algorithm for two positive numbers
 (defn gcd [a b]
@@ -241,10 +223,28 @@
     a
     (recur b (rem a b))))
 
+;; P33
 (defn coprime [a b]
   (= (gcd a b) 1))
 
+;; P34
 (defn totient [x]
   (if (= x 1)
     1
     (count (filter (partial coprime x) (range 1 x)))))
+
+;; P35 prime factors of a given positive integer
+(defn prime-factors-helper [n]
+  (reverse (filter (fn [x] (zero? (rem n x))) (sieve n))))
+
+(defn prime-factors-fn [x nums]
+  (if (nil? nums)
+    nil
+    (if (zero? (rem x (first nums)))
+      (lazy-cons (first nums) (prime-factors-fn (/ x (first nums)) nums))
+      (prime-factors-fn x (rest nums)))))
+
+(defn prime-factors [x]
+  (prime-factors-fn x (prime-factors-helper x)))	     
+  
+
