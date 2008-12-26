@@ -211,8 +211,10 @@
 
 ;; P31 Simple test for prime numbers
 (defn isprime [p]
-  (and (> p 1)
-       (every? (fn [x] (not (zero? (rem p x)))) (range 2 p))))
+  (if (= p 2)
+    true
+    (and (> p 1)
+	 (every? (fn [x] (not (zero? (rem p x)))) (range 2 (inc (Math/sqrt p)))))))
 
 (defn sieve [x]
   (filter isprime (range 1 x)))
