@@ -248,5 +248,28 @@
 
 (defn prime-factors [x]
   (prime-factors-fn x (prime-factors-helper x)))	     
-  
 
+;; P36 Prime factors of a given positive integer + multiplicands
+(defn prime-factors-mult [x]
+  (let [y (prime-factors x)]
+    (map (fn [x] (if (list? x) x (list x 1))) (encode-direct y))))
+
+;; P37 Improved totient function
+(defn totient-improved [m]
+  (let [factors (prime-factors-mult m)]
+    (reduce + (map 
+	       (fn [x] 
+		 (let [p (first x) m (second x)]
+		   (* (dec p) (Math/pow p (dec m)))))
+	       factors))))
+
+;; P38
+
+;; P39 A list of prime numbers
+(defn primes [x y]
+  (filter (fn [z] (< x z)) (sieve y)))
+
+;; P40 Goldbach's conjecture
+
+
+    
