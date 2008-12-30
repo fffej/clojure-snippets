@@ -2,14 +2,11 @@
         '(java.awt.event ActionListener)
         '(java.awt Color GridLayout))
 
-(defn draw-sort [canvas alg]
-  (prn alg))
-
 (def maxval 100)
 
 (def model (take 100 (repeatedly (fn [] (rand-int maxval)))))
 
-(def canvas (proxy [JPanel] []
+(def canvas (proxy [JPanel ActionListener] []
   (paintComponent [g]
     (proxy-super paintComponent g)
     (.setColor g Color/RED)
@@ -17,7 +14,18 @@
       (prn width height)
       (doseq [val (into (sorted-map) (zipmap (range 0 (count model)) model))] 
 	(let [y (int (* (first val) barHeight)) barWidth (int (* (second val) barWidthPerVal))]
-	  (.fillRect g 0 y barWidth barHeight)))))))
+	  (.fillRect g 0 y barWidth barHeight)))))
+  (actionPerformed [e] (prn "Doing something"))))
+
+(let [x (Timer. 1000 canvas)]
+  (defn stop-timer [] (.stop x))
+  (defn start-timer [] (.start x))
+  (defn is-running [] (.isRunning x)))
+
+(defn draw-sort [canvas alg]
+  (if (is-running)
+    (stop-timer)
+    (start-timer)))
 
 (defn sortapp []
   (let [frame (JFrame. "Sort Visualizer")
