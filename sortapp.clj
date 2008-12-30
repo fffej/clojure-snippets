@@ -5,12 +5,19 @@
 (defn draw-sort [canvas alg]
   (prn alg))
 
+(def maxval 100)
+
+(def model (take 100 (repeatedly (fn [] (rand-int maxval)))))
+
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)
     (.setColor g Color/RED)
-    (let [x (.getWidth this) y (.getHeight this)]
-      (prn x y)))))
+    (let [width (.getWidth this) height (.getHeight this) barHeight (/ height (inc (count model))) barWidthPerVal (/ width maxval)]
+      (prn width height)
+      (doseq [val (into (sorted-map) (zipmap (range 0 (count model)) model))] 
+	(let [y (int (* (first val) barHeight)) barWidth (int (* (second val) barWidthPerVal))]
+	  (.fillRect g 0 y barWidth barHeight)))))))
 
 (defn sortapp []
   (let [frame (JFrame. "Sort Visualizer")
