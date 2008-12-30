@@ -37,10 +37,10 @@
     (proxy-super paintComponent g)
     (.setColor g Color/RED)
     (let [width (.getWidth this) height (.getHeight this) barHeight (/ height (inc (count model))) barWidthPerVal (/ width maxval)]
-      (prn width height)
+      (if (< @position (count model))
       (doseq [val (into (sorted-map) (zipmap (range 0 (count model)) (nth bubble-sorted @position)))] 
 	(let [y (int (* (first val) barHeight)) barWidth (int (* (second val) barWidthPerVal))]
-	  (.fillRect g 0 y barWidth barHeight)))))
+	  (.fillRect g 0 y barWidth barHeight))))))
   (actionPerformed [e] (swap! position inc) (.repaint this))))
 
 (let [x (Timer. 250 canvas)]
