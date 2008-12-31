@@ -1,6 +1,6 @@
 (import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel Timer)
         '(java.awt.event ActionListener)
-        '(java.awt Color GridLayout))
+        '(java.awt Color BorderLayout))
 
 ;; Not so good quick sort
 (defn qsort [lst]
@@ -65,10 +65,10 @@
       (.addItem "Quick sort")
       (.addItem "Bubble sort"))
     (doto frame
-      (.setLayout (GridLayout. 2 2 3 3))
-      (.add algorithm-chooser)
-      (.add canvas)
-      (.add run-button)
+      (.setLayout (BorderLayout. 3 3))
+      (.add algorithm-chooser (BorderLayout/PAGE_START))
+      (.add canvas (BorderLayout/CENTER))
+      (.add run-button (BorderLayout/PAGE_END))
       (.setSize 300 300)
       (.setVisible true))))
 	
