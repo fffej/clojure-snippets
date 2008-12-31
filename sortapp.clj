@@ -23,7 +23,6 @@
 (defn bubble-sort [lst]
    (take (count lst) (iterate bubble lst)))
 
-
 (def maxval 100)
 
 (def model (take 100 (repeatedly (fn [] (rand-int maxval)))))
@@ -41,7 +40,7 @@
       (doseq [val (into (sorted-map) (zipmap (range 0 (count model)) (nth bubble-sorted @position)))] 
 	(let [y (int (* (first val) barHeight)) barWidth (int (* (second val) barWidthPerVal))]
 	  (.fillRect g 0 y barWidth barHeight))))))
-  (actionPerformed [e] (swap! position inc) (.repaint this))))
+  (actionPerformed [e] (swap! position inc) (compare-and-set! position (count model) 0) (.repaint this))))
 
 (let [x (Timer. 250 canvas)]
   (defn stop-timer [] (.stop x))
