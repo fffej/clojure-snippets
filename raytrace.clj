@@ -88,6 +88,9 @@
 (defn ray-trace [world res g w h]
   (let [buffered-image (BufferedImage. w h BufferedImage/TYPE_BYTE_GRAY)]
     ;; do some looping and set things
+    (doseq [x (range 1 w)]
+      (doseq [y (range 1 h)]
+	(.setRGB buffered-image x y (rand-int Integer/MAX_VALUE))))
     (.drawImage g buffered-image 0 0 Color/RED nil)))
 
 ;; UI
