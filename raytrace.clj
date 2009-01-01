@@ -50,6 +50,21 @@
   (let [c (:centre s)]
     (unit-vector (point-subtract c pt))))
 
+(defn sphere-intersect [s pt ray]
+  (let [c (:centre s)
+	n (minroot (+ (square (:x ray)) (square (:y ray)) (square (:z ray)))
+		   (* 2 (+ (* (- (:x pt) (:x c)) (:x ray))
+			   (* (- (:y pt) (:y c)) (:y ray))
+			   (* (- (:z pt) (:z c)) (:z ray))))
+		   (+ (square (- (:x pt) (:x c)))
+		      (square (- (:y pt) (:y c)))
+		      (square (- (:z pt) (:z c)))
+		      (- (square (:radius s)))))]
+	(if n
+	  (struct point (+ (:x pt) (* n (:x ray)))
+                        (+ (:y pt) (* n (:y ray)))
+			(+ (:z pt) (* n (:z ray)))))))
+
 
 ;; UI
 (def canvas (proxy [JPanel] []
