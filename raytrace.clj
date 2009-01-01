@@ -1,4 +1,6 @@
 ;;; Implementation of ray tracing algorithm from ANSI Common Lisp
+(import '(javax.swing JFrame JPanel)
+        '(java.awt Color))
 
 
 ;; Math Utility functions
@@ -28,4 +30,16 @@
 	  (min (/ (+ (- b) discroot) (* 2 a))
 	       (/ (- (- b) discroot) (* 2 a))))))))
 
-(
+
+(def canvas (proxy [JPanel] []
+  (paintComponent [g]
+    (proxy-super paintComponent g)		  
+    (.setColor g Color/RED)
+    (.fillRect g 0 0 300 300))))
+
+(defn raytraceapp []
+  (let [frame (JFrame. "Ray Tracing")]
+    (doto frame
+      (.add canvas)
+      (.setSize 300 300)
+      (.setVisible true))))
