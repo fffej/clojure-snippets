@@ -1,6 +1,7 @@
 ;;; Implementation of ray tracing algorithm from ANSI Common Lisp
 (import '(javax.swing JFrame JPanel)
-        '(java.awt Color))
+        '(java.awt Color)
+	'(java.awt.image BufferedImage))
 
 ;; Bits for the modelling
 
@@ -77,15 +78,24 @@
     (max 0 (+ (* (:x ray) (:x normal))
 	      (* (:y ray) (:y normal))
 	      (* (:z ray) (:z normal))))))
-	      
 
+(defn first-hit [pt ray]
+  (map (fn [obj] 
+	 (let [h (sphere-intersect obj point ray)]
+	   (if h
+	     55))) world))
+
+(defn ray-trace [world res g w h]
+  (let [buffered-image (BufferedImage. w h BufferedImage/TYPE_BYTE_GRAY)]
+    ;; do some looping and set things
+    (.drawImage g buffered-image 0 0 Color/RED nil)))
 
 ;; UI
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (.fillRect g 0 0 300 300))))
+    (ray-trace world 1 g (.getWidth this) (.getHeight this)))))
 
 (defn raytraceapp []
   (let [frame (JFrame. "Ray Tracing")]
