@@ -2,6 +2,8 @@
 (import '(javax.swing JFrame JPanel)
         '(java.awt Color))
 
+;; Bits for the modelling
+
 
 ;; Math Utility functions
 (defn square [x] (* x x))
@@ -15,12 +17,15 @@
   (let [d (magnitude p)]
     (struct point (/ (:x p) d) (/ (:y p) d) (/ (:z p) d))))
 
+(defn point-subtract [p1 p2]
+  (struct point 
+	  (- (:x p1) (:x p2))
+	  (- (:y p1) (:y p2))
+	  (- (:z p1) (:z p2))))
+
 (defn distance [p1 p2]
-  (magnitude
-   (struct point 
-	   (- (:x p1) (:x p2))
-	   (- (:y p1) (:y p2))
-	   (- (:z p1) (:z p2)))))
+  (magnitude (point-subtract p1 p2)))
+
 
 (defn minroot [a b c]
   (if (zero? a)
@@ -35,6 +40,15 @@
 (def eye (struct point 0 0 200))
 
 (defstruct surface :color)
+
+(defstruct sphere :color :radius :centre) ;; Clojure doesn't appear to support include?
+
+(defn defsphere [point r c]
+  (struct sphere c r point))
+
+(defn sphere-normal [s pt]
+  (let [c (:centre s)]
+    (unit-vector (point-subtract c pt))))
 
 
 ;; UI
