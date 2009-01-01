@@ -46,6 +46,13 @@
 (defn defsphere [point r c]
   (struct sphere c r point))
 
+
+(def world [(defsphere (struct point 0   -300 -1200) 200 0.8)
+	    (defsphere (struct point -80 -150 -1200) 200 0.7)
+	    (defsphere (struct point -70 -100 -1200) 200 0.9)])
+
+
+
 (defn sphere-normal [s pt]
   (let [c (:centre s)]
     (unit-vector (point-subtract c pt))))
