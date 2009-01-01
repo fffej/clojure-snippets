@@ -26,7 +26,7 @@
   (if (zero? a)
     (/ (- c) b)
     (let [disc (- (square b) (* 4 a c))]
-      (if (> 0 disc)
+      (if (> disc 0)
 	(let [discroot (Math/sqrt disc)]
 	  (min (/ (+ (- b) discroot) (* 2 a))
 	       (/ (- (- b) discroot) (* 2 a))))))))
