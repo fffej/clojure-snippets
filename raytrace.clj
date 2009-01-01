@@ -65,6 +65,13 @@
                         (+ (:y pt) (* n (:y ray)))
 			(+ (:z pt) (* n (:z ray)))))))
 
+(defn lambert [s intersection ray]
+  (let [normal (sphere-normal s intersection)]
+    (max 0 (+ (* (:x ray) (:x normal))
+	      (* (:y ray) (:y normal))
+	      (* (:z ray) (:z normal))))))
+	      
+
 
 ;; UI
 (def canvas (proxy [JPanel] []
