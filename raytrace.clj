@@ -6,20 +6,21 @@
 ;; Math Utility functions
 (defn square [x] (* x x))
 
-(defn magnitude [x y z]
-  (Math/sqrt (+ (square x) (square y) (square z))))
-
-(defn unit-vector [x y z]
-  (let [d (magnitude x y z)]
-    [( / x d) (/ y d) (/ z d)]))
-
 (defstruct point :x :y :z)
+
+(defn magnitude [p]
+  (Math/sqrt (+ (square (:x p)) (square (:y p)) (square (:z p)))))
+
+(defn unit-vector [p]
+  (let [d (magnitude p)]
+    (struct point (/ (:x p) d) (/ (:y p) d) (/ (:z p) d))))
 
 (defn distance [p1 p2]
   (magnitude
-   (- (:x p1) (:x p2))
-   (- (:y p1) (:y p2))
-   (- (:z p1) (:z p2))))
+   (struct point 
+	   (- (:x p1) (:x p2))
+	   (- (:y p1) (:y p2))
+	   (- (:z p1) (:z p2)))))
 
 (defn minroot [a b c]
   (if (zero? a)
@@ -30,7 +31,13 @@
 	  (min (/ (+ (- b) discroot) (* 2 a))
 	       (/ (- (- b) discroot) (* 2 a))))))))
 
+;; Ray tracing bits
+(def eye (struct point 0 0 200))
 
+(defstruct surface :color)
+
+
+;; UI
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)		  
