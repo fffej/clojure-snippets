@@ -47,12 +47,7 @@
 (defn defsphere [point r c]
   (struct sphere c r point))
 
-
-(def world [(defsphere (struct point 0   -300 -1200) 200 0.8)
-	    (defsphere (struct point -80 -150 -1200) 200 0.7)
-	    (defsphere (struct point -70 -100 -1200) 200 0.9)])
-
-
+(def world [(defsphere (struct point 350 350 -600) 250 0.32)])
 
 (defn sphere-normal [s pt]
   (let [c (:centre s)]
@@ -79,18 +74,31 @@
 	      (* (:y ray) (:y normal))
 	      (* (:z ray) (:z normal))))))
 
+;; second item = what we hit
+;; first item = where we hit
 (defn first-hit [pt ray]
-  (map (fn [obj] 
-	 (let [h (sphere-intersect obj point ray)]
-	   (if h
-	     55))) world))
+   (first 
+    (map (fn [obj]
+	   (let [h (sphere-intersect obj pt ray)]
+	     (if (not (nil? h))
+	         [h obj])))
+	 world)))
+
+(defn send-ray [src ray]
+  (let [hit (first-hit src ray)]
+    (if (not (nil? hit))
+      (* (lambert (second hit) ray (first hit)) 255)
+      0)))
+
+(defn color-at [x y]
+  (let [ray (unit-vector (point-subtract (struct point x y 0) eye))]
+    (* (send-ray eye ray) 255)))
 
 (defn ray-trace [world res g w h]
   (let [buffered-image (BufferedImage. w h BufferedImage/TYPE_BYTE_GRAY)]
-    ;; do some looping and set things
     (doseq [x (range 1 w)]
       (doseq [y (range 1 h)]
-	(.setRGB buffered-image x y (rand-int Integer/MAX_VALUE))))
+	(.setRGB buffered-image x y (color-at x y))))
     (.drawImage g buffered-image 0 0 Color/RED nil)))
 
 ;; UI
