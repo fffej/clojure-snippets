@@ -38,7 +38,7 @@
 	       (/ (- (- b) discroot) (* 2 a))))))))
 
 ;; Ray tracing bits
-(def eye (struct point 0 0 200))
+(def eye (struct point 150 150 200))
 
 (defstruct surface :color)
 
@@ -47,7 +47,7 @@
 (defn defsphere [point r c]
   (struct sphere c r point))
 
-(def world [(defsphere (struct point 350 350 -600) 250 0.32)])
+(def world [(defsphere (struct point 150 150 -600) 250 0.32)])
 
 (defn sphere-normal [s pt]
   (let [c (:centre s)]
@@ -87,7 +87,8 @@
 (defn send-ray [src ray]
   (let [hit (first-hit src ray)]
     (if (not (nil? hit))
-      (* (lambert (second hit) ray (first hit)) 255)
+      (let [int (first hit) s (second hit)]
+	(* (lambert s ray int) (:color s)))
       0)))
 
 (defn color-at [x y]
@@ -113,4 +114,5 @@
     (doto frame
       (.add canvas)
       (.setSize 300 300)
+      (.setResizable false)
       (.setVisible true))))
