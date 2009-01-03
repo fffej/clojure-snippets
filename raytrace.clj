@@ -27,7 +27,6 @@
 (defn distance [p1 p2]
   (magnitude (point-subtract p1 p2)))
 
-
 (defn minroot [a b c]
   (if (zero? a)
     (/ (- c) b)
@@ -123,3 +122,6 @@
       (.setSize 300 300)
       (.setResizable false)
       (.setVisible true))))
+
+;;[21:53] <Chousuke> fffej: you could add a higher-order function "point-op" that takes an [op & points] and returns (struct point (apply op (map :x points)) (apply op (map :y points)) (apply op (map :z points)))
+;; [21:54] <Chousuke> fffej: dunno what that does to speed, but it might make it clearer :)
