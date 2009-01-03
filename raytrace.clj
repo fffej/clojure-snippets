@@ -47,7 +47,8 @@
 (defn defsphere [point r c]
   (struct sphere c r point))
 
-(def world [(defsphere (struct point 150 150 -600) 250 0.32)])
+(def world [(defsphere (struct point 150 150 -600) 250 0.32)
+            (defsphere (struct point 175 175 -300) 100 0.64)])
 
 (defn sphere-normal [s pt]
   (let [c (:centre s)]
@@ -77,12 +78,18 @@
 ;; second item = what we hit
 ;; first item = where we hit
 (defn first-hit [pt ray]
-   (first 
-    (map (fn [obj]
-	   (let [h (sphere-intersect obj pt ray)]
-	     (if (not (nil? h))
-	         [h obj])))
-	 world)))
+  (reduce 
+   (fn [x y]
+     (let [hx (first x) hy (first y)]
+       (cond
+	(nil? hx) y
+	(nil? hy) x
+	:else (let [d1 (distance hx pt) d2 (distance hy pt)]
+		  (if (< d1 d2) x y)))))
+   (map (fn [obj]
+	  (let [h (sphere-intersect obj pt ray)]
+	    (if (not (nil? h))
+	      [h obj]))) world)))
 
 (defn send-ray [src ray]
   (let [hit (first-hit src ray)]
