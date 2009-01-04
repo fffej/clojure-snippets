@@ -101,10 +101,10 @@
   (let [ray (unit-vector (point-subtract (struct point x y 0) eye))]
     (* (send-ray eye ray) 255)))
 
-(defn ray-trace [world res g w h]
+(defn ray-trace [world res g w h ox oy]
   (let [buffered-image (BufferedImage. w h BufferedImage/TYPE_BYTE_GRAY)]
-    (doseq [x (range 1 w)]
-      (doseq [y (range 1 h)]
+    (doseq [x (range ox (+ ox w))]
+      (doseq [y (range oy (+ oy h))]
 	(.setRGB buffered-image x y (color-at x y))))
     (.drawImage g buffered-image 0 0 Color/RED nil)))
 
@@ -113,7 +113,7 @@
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (ray-trace world 1 g (.getWidth this) (.getHeight this)))))
+    (ray-trace world 1 g (.getWidth this) (.getHeight this) 0 0))))
 
 (defn raytraceapp []
   (let [frame (JFrame. "Ray Tracing")]
