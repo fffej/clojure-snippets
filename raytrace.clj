@@ -108,11 +108,17 @@
 	(.setRGB buffered-image x y (color-at x y))))
     buffered-image))
 
+(defn create-work-list [width height unitX unitY]
+  (let [xs (range 0 width unitX) ys (range 0 height unitY)]
+    (mapcat (fn [x] (mapcat (fn [y] (list (list x y))) ys)) xs)))
+
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (let [width (.getWidth this) height (.getHeight this) buffered-image (ray-trace world 1 g width height 0 0)]
+    (let [width (.getWidth this) height (.getHeight this) buffered-image (ray-trace world 1 g width height 0 0) unitX (/ width 4) unitY (/ height 4)]
+      
+
       (.drawImage g buffered-image 0 0 Color/RED nil)))))
 
 (defn raytraceapp []
