@@ -108,12 +108,11 @@
 	(.setRGB buffered-image x y (color-at x y))))
     buffered-image))
 
-;; UI
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (let [buffered-image (ray-trace world 1 g (.getWidth this) (.getHeight this) 0 0)]
+    (let [width (.getWidth this) height (.getHeight this) buffered-image (ray-trace world 1 g width height 0 0)]
       (.drawImage g buffered-image 0 0 Color/RED nil)))))
 
 (defn raytraceapp []
