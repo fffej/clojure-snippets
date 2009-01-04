@@ -106,14 +106,15 @@
     (doseq [x (range ox (+ ox w))]
       (doseq [y (range oy (+ oy h))]
 	(.setRGB buffered-image x y (color-at x y))))
-    (.drawImage g buffered-image 0 0 Color/RED nil)))
+    buffered-image))
 
 ;; UI
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (ray-trace world 1 g (.getWidth this) (.getHeight this) 0 0))))
+    (let [buffered-image (ray-trace world 1 g (.getWidth this) (.getHeight this) 0 0)]
+      (.drawImage g buffered-image 0 0 Color/RED nil)))))
 
 (defn raytraceapp []
   (let [frame (JFrame. "Ray Tracing")]
