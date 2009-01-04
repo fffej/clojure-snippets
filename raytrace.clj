@@ -101,11 +101,11 @@
   (let [ray (unit-vector (point-subtract (struct point x y 0) eye))]
     (* (send-ray eye ray) 255)))
 
-(defn ray-trace [world res g w h ox oy]
+(defn ray-trace [world w h ox oy]
   (let [buffered-image (BufferedImage. w h BufferedImage/TYPE_BYTE_GRAY)]
-    (doseq [x (range ox (+ ox w))]
-      (doseq [y (range oy (+ oy h))]
-	(.setRGB buffered-image x y (color-at x y))))
+    (doseq [x (range 0 (dec w))]
+      (doseq [y (range 0 (dec h))]
+	(.setRGB buffered-image x y (color-at (+ x ox) (+ y oy)))))
     buffered-image))
 
 (defn create-work-list [width height unitX unitY]
@@ -116,10 +116,9 @@
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (let [width (.getWidth this) height (.getHeight this) buffered-image (ray-trace world 1 g width height 0 0) unitX (/ width 4) unitY (/ height 4)]
-      
-
-      (.drawImage g buffered-image 0 0 Color/RED nil)))))
+    (let [width (.getWidth this) height (.getHeight this) unitX (/ width 16) unitY (/ height 16) work-list (create-work-list width height unitX unitY)]
+      (doseq [image (pmap (fn [pos] (list (apply ray-trace (list world unitX unitY (first pos) (second pos))) (first pos) (second pos))) work-list)]
+	(.drawImage g (first image) (second image) (nth image 2) unitX unitY nil))))))
 
 (defn raytraceapp []
   (let [frame (JFrame. "Ray Tracing")]
