@@ -17,6 +17,20 @@
     (nth (nth world x) y)
     0))
 
+(defn toggle [x]
+  (if (= x 0) 1 0))
+
+(defn toggle-row-at [row pos]
+  (map (fn [x] (if (= pos (first x)) (toggle (second x)) (second x))) (zipmap (range 0 (count row)) row)))
+
+(defn toggle-pos [world x y]
+  (map (fn [v] 
+	 (if (= (first v) x) 
+	   (toggle-row-at (second v) y)
+	   (second v))) 
+       (zipmap (range 0 (count world)) world)))
+
+
 (defn neighbour-count [world x y]
   (+ (world-at world (dec x) (dec y)) (world-at world x (dec y)) (world-at world (inc x) (dec y))
      (world-at world (dec x) y) (world-at world (inc x) y)
@@ -28,8 +42,7 @@
      (and alive (< 2 neighbours)) 0 ;; under population
      (and alive (> 3 neighbours)) 0 ;; over-crowding
      (and alive (or (= 2 neighbours) (= 3 neighbours))) 1 ;; unchanged to the next generation
-     (and (not alive) (= 3 neighbours)) 1)))
-      
+     (and (not alive) (= 3 neighbours)) 1)))      
 
 (defn create-world [w h]
   (let [row (into (vector) (replicate w 0))]
@@ -58,7 +71,7 @@
 	(let [alive (world-at @world x y)]
 	  (cond
 	   (zero? alive) (.setColor g Color/BLUE)
-	   (:else) (.setColor g Color/RED))
+	   :else (.setColor g Color/RED))
 	  (.fillRect g (* x grid-size) (* y grid-size) (dec grid-size) (dec grid-size))))))))
 
 (defn lifeapp []
@@ -67,7 +80,8 @@
       (.addMouseListener (proxy [MouseAdapter] []
         (mouseClicked [e] 
 	  (let [x (int (/ (.getX e) grid-size)) y (int (/ (.getY e) grid-size))]
-	    (prn x y))))))
+	    (swap! world (fn [w] (toggle-pos w x y))))
+	  (.repaint canvas)))))
     (doto frame
       (.add canvas)
       (.setSize 300 300)
