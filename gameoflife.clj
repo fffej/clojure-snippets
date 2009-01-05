@@ -2,7 +2,7 @@
 ;;; jeff.foster@acm.org
 
 (import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel Timer)
-       '(java.awt.event ActionListener)
+       '(java.awt.event ActionListener MouseListener MouseAdapter)
        '(java.awt GridLayout Color))
 
 
@@ -63,6 +63,11 @@
 
 (defn lifeapp []
   (let [frame (JFrame. "Game of Life")]
+    (doto canvas
+      (.addMouseListener (proxy [MouseAdapter] []
+        (mouseClicked [e] 
+	  (let [x (int (/ (.getX e) grid-size)) y (int (/ (.getY e) grid-size))]
+	    (prn x y))))))
     (doto frame
       (.add canvas)
       (.setSize 300 300)
