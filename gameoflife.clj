@@ -45,8 +45,7 @@
      :else 0)))
 
 (defn create-world [w h]
-  (let [row (into (vector) (replicate w 0))]
-    (into (vector) (replicate h row))))
+  (replicate h (replicate w 0)))
 
 (defn life-step [w]
   (let [width (count w) height (count (first w))]
@@ -59,7 +58,7 @@
 
 ;; UI elements and mutable ness
 
-(def grid-size 10)
+(def grid-size 15)
 
 (def *world* (atom (create-world grid-size grid-size)))
 
@@ -88,5 +87,5 @@
     (doto frame
       (.add canvas)
       (.setSize 300 300)
-      (.setResizable false)
+      (.setResizable true)
       (.setVisible true))))
