@@ -116,17 +116,15 @@
   (paintComponent [g]
     (proxy-super paintComponent g)		  
     (.setColor g Color/RED)
-    (let [width (.getWidth this) height (.getHeight this) unitX (/ width 16) unitY (/ height 16) work-list (create-work-list width height unitX unitY)]
+    (let [width (.getWidth this) height (.getHeight this) unitX (/ width 100) unitY (/ height 100) work-list (create-work-list width height unitX unitY)]
+      (time
       (doseq [image (pmap (fn [pos] (list (apply ray-trace (list world unitX unitY (first pos) (second pos))) (first pos) (second pos))) work-list)]
-	(.drawImage g (first image) (second image) (nth image 2) unitX unitY nil))))))
+	(.drawImage g (first image) (second image) (nth image 2) unitX unitY nil)))))))
 
 (defn raytraceapp []
   (let [frame (JFrame. "Ray Tracing")]
     (doto frame
       (.add canvas)
-      (.setSize 300 300)
+      (.setSize 1000 1000)
       (.setResizable false)
       (.setVisible true))))
-
-;;[21:53] <Chousuke> fffej: you could add a higher-order function "point-op" that takes an [op & points] and returns (struct point (apply op (map :x points)) (apply op (map :y points)) (apply op (map :z points)))
-;; [21:54] <Chousuke> fffej: dunno what that does to speed, but it might make it clearer :)
