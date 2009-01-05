@@ -48,18 +48,18 @@
   (let [row (into (vector) (replicate w 0))]
     (into (vector) (replicate h row))))
 
-(defn life-step [world]
-  (let [width (count world) height (count (first world))]
+(defn life-step [w]
+  (let [width (count w) height (count (first w))]
     (map 
      (fn [row] (map (fn [col] 
 		      (let [x (first row) y (first col)]
-			(new-state world x y)))
+			(new-state w x y)))
 		    (zipmap (range 0 height) (second row))))
-     (zipmap (range 0 width) world))))
+     (zipmap (range 0 width) w))))
 
 ;; UI elements and mutable ness
 
-(def grid-size 16)
+(def grid-size 10)
 
 (def world (atom (create-world grid-size grid-size)))
 
@@ -68,11 +68,11 @@
     (proxy-super paintComponent g)
     (doseq [x (range 0 grid-size)]
       (doseq [y (range 0 grid-size)]
-	(let [alive (world-at @world x y)]
+	(let [alive (world-at @world x y) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
 	  (cond
 	   (zero? alive) (.setColor g Color/BLUE)
 	   :else (.setColor g Color/RED))
-	  (.fillRect g (* x grid-size) (* y grid-size) (dec grid-size) (dec grid-size))))))))
+	  (.fillRect g (* x sq-size) (* y sq-size) (dec sq-size) (dec sq-size))))))))
 
 (defn lifeapp []
   (let [frame (JFrame. "Game of Life")]
@@ -80,7 +80,7 @@
       (.addMouseListener (proxy [MouseAdapter] []
         (mouseClicked [e] 
           (if (= (MouseEvent/BUTTON1) (.getButton e))
-	    (let [x (int (/ (.getX e) grid-size)) y (int (/ (.getY e) grid-size))]
+	    (let [sq-size (/ (min (.getHeight canvas) (.getWidth canvas)) grid-size) x (int (/ (.getX e) sq-size)) y (int (/ (.getY e) sq-size))]
 	      (swap! world (fn [w] (toggle-pos w x y))))
 	    (swap! world (fn [w] (life-step w))))
 	  (.repaint canvas)))))
