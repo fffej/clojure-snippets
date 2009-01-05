@@ -56,7 +56,10 @@
     (doseq [x (range 0 grid-size)]
       (doseq [y (range 0 grid-size)]
 	(let [alive (world-at @world x y)]
-	      (.fillRect g (* x grid-size) (* y grid-size) (dec grid-size) (dec grid-size))))))))
+	  (cond
+	   (zero? alive) (.setColor g Color/BLUE)
+	   (:else) (.setColor g Color/RED))
+	  (.fillRect g (* x grid-size) (* y grid-size) (dec grid-size) (dec grid-size))))))))
 
 (defn lifeapp []
   (let [frame (JFrame. "Game of Life")]
