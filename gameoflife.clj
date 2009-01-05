@@ -24,10 +24,9 @@
   (map (fn [x] (if (= pos (first x)) (toggle (second x)) (second x))) (zipmap (range 0 (count row)) row)))
 
 (defn toggle-pos [world x y]
-  (map (fn [v] 
-	 (if (= (first v) x) 
-	   (toggle-row-at (second v) y)
-	   (second v))) 
+  (map (fn [v] (if (= (first v) x) 
+		   (toggle-row-at (second v) y)
+	           (second v))) 
        (zipmap (range 0 (count world)) world)))
 
 
@@ -39,10 +38,11 @@
 (defn new-state [world x y]
   (let [neighbours (neighbour-count world x y) alive (world-at world x y)]
     (cond 
-     (and alive (< neighbours 2)) 0 ;; under population
-     (and alive (> neighbours 3)) 0 ;; over-crowding
-     (and alive (or (= 2 neighbours) (= 3 neighbours))) 1 ;; unchanged to the next generation
-     (and (not alive) (= 3 neighbours)) 1)))      
+     (and (= alive 1) (< neighbours 2)) 0 ;; under population
+     (and (= alive 1) (> neighbours 3)) 0 ;; over-crowding
+     (and (= alive 1) (or (= 2 neighbours) (= 3 neighbours))) 1 ;; unchanged to the next generation
+     (and (= 3 neighbours)) 1 ;; any tile with exactly 3 live neighbour cells becomes alive
+     :else 0)))
 
 (defn create-world [w h]
   (let [row (into (vector) (replicate w 0))]
@@ -75,6 +75,7 @@
 	  (.fillRect g (* x sq-size) (* y sq-size) (dec sq-size) (dec sq-size))))))))
 
 (defn lifeapp []
+  (swap! *world* (fn [w] (create-world grid-size grid-size))) 
   (let [frame (JFrame. "Game of Life")]
     (doto canvas
       (.addMouseListener (proxy [MouseAdapter] []
