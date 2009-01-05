@@ -32,8 +32,5 @@
 (defn life-step [world]
   (let [width (count world) height (count (first world))]
     (map 
-     (fn [row] 
-       (let [x (first row) cols (zipmap (range 0 height) (second row))]
-	 
-	 (second row)))
+     (fn [row] (map (fn [col] (second col)) (zipmap (range 0 height) (second row))))
      (zipmap (range 0 width) world))))
