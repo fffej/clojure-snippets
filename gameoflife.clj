@@ -2,7 +2,7 @@
 ;;; jeff.foster@acm.org
 
 (import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel Timer)
-       '(java.awt.event ActionListener MouseListener MouseAdapter)
+       '(java.awt.event ActionListener MouseListener MouseAdapter MouseEvent)
        '(java.awt GridLayout Color))
 
 
@@ -79,9 +79,12 @@
     (doto canvas
       (.addMouseListener (proxy [MouseAdapter] []
         (mouseClicked [e] 
-	  (let [x (int (/ (.getX e) grid-size)) y (int (/ (.getY e) grid-size))]
-	    (swap! world (fn [w] (toggle-pos w x y))))
+          (if (= (MouseEvent/BUTTON1) (.getButton e))
+	    (let [x (int (/ (.getX e) grid-size)) y (int (/ (.getY e) grid-size))]
+	      (swap! world (fn [w] (toggle-pos w x y))))
+	    (swap! world (fn [w] (life-step w))))
 	  (.repaint canvas)))))
+
     (doto frame
       (.add canvas)
       (.setSize 300 300)
