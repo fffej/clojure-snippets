@@ -39,8 +39,8 @@
 (defn new-state [world x y]
   (let [neighbours (neighbour-count world x y) alive (world-at world x y)]
     (cond 
-     (and alive (< 2 neighbours)) 0 ;; under population
-     (and alive (> 3 neighbours)) 0 ;; over-crowding
+     (and alive (< neighbours 2)) 0 ;; under population
+     (and alive (> neighbours 3)) 0 ;; over-crowding
      (and alive (or (= 2 neighbours) (= 3 neighbours))) 1 ;; unchanged to the next generation
      (and (not alive) (= 3 neighbours)) 1)))      
 
@@ -61,14 +61,14 @@
 
 (def grid-size 10)
 
-(def world (atom (create-world grid-size grid-size)))
+(def *world* (atom (create-world grid-size grid-size)))
 
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)
     (doseq [x (range 0 grid-size)]
       (doseq [y (range 0 grid-size)]
-	(let [alive (world-at @world x y) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
+	(let [alive (world-at @*world* x y) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
 	  (cond
 	   (zero? alive) (.setColor g Color/BLUE)
 	   :else (.setColor g Color/RED))
@@ -81,10 +81,9 @@
         (mouseClicked [e] 
           (if (= (MouseEvent/BUTTON1) (.getButton e))
 	    (let [sq-size (/ (min (.getHeight canvas) (.getWidth canvas)) grid-size) x (int (/ (.getX e) sq-size)) y (int (/ (.getY e) sq-size))]
-	      (swap! world (fn [w] (toggle-pos w x y))))
-	    (swap! world (fn [w] (life-step w))))
+	      (swap! *world* (fn [w] (toggle-pos w x y))))
+	    (swap! *world* (fn [w] (life-step w))))
 	  (.repaint canvas)))))
-
     (doto frame
       (.add canvas)
       (.setSize 300 300)
