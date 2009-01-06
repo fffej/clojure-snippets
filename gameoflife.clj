@@ -11,41 +11,34 @@
 ;; 2. Any live cell with more than three live neighbours dies, as if by overcrowding.
 ;; 3. Any live cell with two or three live neighbours lives, unchanged, to the next generation.
 ;; 4. Any tile with exactly three live neighbours cells will be populated with a living cell.
+(defstruct point :x :y)
 
-(defn world-at [world x y]
-  (if (and (>= x 0) (>= y 0) (< x (count world)) (< y (count (first world))))
-    (nth (nth world x) y)
-    0))
+(defn world-at [world point]
+  (get world point))
 
 (defn toggle [x]
   (if (= x 0) 1 0))
 
-(defn toggle-row-at [row pos]
-  (map (fn [x] (if (= pos (first x)) (toggle (second x)) (second x))) (zipmap (range 0 (count row)) row)))
+(defn toggle-pos [world point]
+  (assoc world point (toggle world-at point)))
 
-(defn toggle-pos [world x y]
-  (map (fn [v] (if (= (first v) x) 
-		   (toggle-row-at (second v) y)
-	           (second v))) 
-       (zipmap (range 0 (count world)) world)))
+(defn neighbours [p]
+  (let [x (:x p) y (:y p)]
+    [(struct point (dec x) (dec y)) (struct point x (dec y)) (struct point (inc x) (dec y))
+     (struct point (dec x) y) (struct point (inc x) y)
+     (struct point (inc x) (inc y)) (struct point x (inc y)) (struct point (inc x) (dec y))]))
 
+(defn neighbour-count [world p]
+  (reduce + (map (fn [x] (let [v (world-at world x)] (if (nil? v) 0 v))) (neighbours p))))
 
-(defn neighbour-count [world x y]
-  (+ (world-at world (dec x) (dec y)) (world-at world x (dec y)) (world-at world (inc x) (dec y))
-     (world-at world (dec x) y) (world-at world (inc x) y)
-     (world-at world (dec x) (inc y)) (world-at world x (inc y)) (world-at world (inc x) (inc y))))
-
-(defn new-state [world x y]
-  (let [neighbours (neighbour-count world x y) alive (world-at world x y)]
+(defn new-state [world p]
+  (let [neighbours (neighbour-count world p) alive (world-at world p)]
     (cond 
      (and (= alive 1) (< neighbours 2)) 0 ;; under population
      (and (= alive 1) (> neighbours 3)) 0 ;; over-crowding
      (and (= alive 1) (or (= 2 neighbours) (= 3 neighbours))) 1 ;; unchanged to the next generation
      (and (= 3 neighbours)) 1 ;; any tile with exactly 3 live neighbour cells becomes alive
      :else 0)))
-
-(defn create-world [w h]
-  (replicate h (replicate w 0)))
 
 (defn life-step [w]
   (let [width (count w) height (count (first w))]
@@ -57,24 +50,23 @@
      (zipmap (range 0 width) w))))
 
 ;; UI elements and mutable ness
-
 (def grid-size 15)
 
-(def *world* (atom (create-world grid-size grid-size)))
+(def *world* (atom (hash-map)))
 
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)
     (doseq [x (range 0 grid-size)]
       (doseq [y (range 0 grid-size)]
-	(let [alive (world-at @*world* x y) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
+	(let [alive (world-at @*world* (struct point x y)) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
 	  (cond
-	   (zero? alive) (.setColor g Color/BLUE)
+	   (nil? alive) (.setColor g Color/BLUE)
 	   :else (.setColor g Color/RED))
 	  (.fillRect g (* x sq-size) (* y sq-size) (dec sq-size) (dec sq-size))))))))
 
 (defn lifeapp []
-  (swap! *world* (fn [w] (create-world grid-size grid-size))) 
+  (swap! *world* (fn [w] (hash-map)))
   (let [frame (JFrame. "Game of Life")]
     (doto canvas
       (.addMouseListener (proxy [MouseAdapter] []
