@@ -48,29 +48,29 @@
 ;; UI elements and mutable ness
 (def grid-size 15)
 
-(def *world* (atom (create-world grid-size grid-size)))
+(def world (atom (create-world grid-size grid-size)))
 
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
     (proxy-super paintComponent g)
     (doseq [x (range 0 grid-size)]
       (doseq [y (range 0 grid-size)]
-	(let [alive (world-at @*world* (struct point x y)) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
+	(let [alive (world-at @world (struct point x y)) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
 	  (cond
 	   (zero? alive) (.setColor g Color/BLUE)
 	   :else (.setColor g Color/RED))
 	  (.fillRect g (* x sq-size) (* y sq-size) (dec sq-size) (dec sq-size))))))))
 
 (defn lifeapp []
-  (swap! *world* (fn [w] (create-world grid-size grid-size)))
+  (swap! world (fn [w] (create-world grid-size grid-size)))
   (let [frame (JFrame. "Game of Life")]
     (doto canvas
       (.addMouseListener (proxy [MouseAdapter] []
         (mouseClicked [e] 
           (if (= (MouseEvent/BUTTON1) (.getButton e))
 	    (let [sq-size (/ (min (.getHeight canvas) (.getWidth canvas)) grid-size) x (int (/ (.getX e) sq-size)) y (int (/ (.getY e) sq-size))]
-	      (swap! *world* (fn [w] (toggle-pos w (struct point x y)))))
-	    (swap! *world* (fn [w] (life-step w))))
+	      (swap! world (fn [w] (toggle-pos w (struct point x y)))))
+	    (swap! world (fn [w] (life-step w))))
 	  (.repaint canvas)))))
     (doto frame
       (.add canvas)
