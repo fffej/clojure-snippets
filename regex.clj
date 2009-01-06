@@ -5,6 +5,7 @@
 
 (import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel BoxLayout)
        '(java.awt.event ActionListener KeyAdapter)
+       '(javax.swing.text DefaultHighlighter)
        '(java.awt GridLayout Color))
 
 ;; TODO exeption handling
@@ -21,7 +22,11 @@
 	statusBar (JLabel. "Match from 0 to 0")
         keyHandler (proxy [KeyAdapter] [] 
 		     (keyTyped [keyEvent] 
-		       (let [m (match (.getText regexText) (.getText targetText))]
+		       (let [m (match (.getText regexText) (.getText targetText)) 
+			     hl (.getHighlighter targetText)
+			     pen (DefaultHighlighter$DefaultHighlightPainter. Color/RED)]
+			 (.removeAllHighlights hl)
+			 (.addHighlight hl (first m) (second m) pen)
 			 (.setText statusBar (format "Match from %s to %s" (first m) (second m))))))]
     (doto regexText
       (.addKeyListener keyHandler))
