@@ -47,7 +47,7 @@
     (apply hash-map (mapcat (fn [a] (mapcat (fn [b] (list (struct point a b) 0))  y)) x))))
 
 ;; UI elements and mutable ness
-(def grid-size 2)
+(def grid-size 15)
 
 (def *world* (atom (create-world grid-size grid-size)))
 
