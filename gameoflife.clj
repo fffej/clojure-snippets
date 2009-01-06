@@ -16,11 +16,10 @@
 (defn world-at [world point]
   (get world point))
 
-(defn toggle [x]
-  (if (= x 0) 1 0))
-
 (defn toggle-pos [world point]
-  (assoc world point (toggle world-at point)))
+  (if (nil? (world-at world point))
+    (assoc world point 1)
+    (dissoc world point)))
 
 (defn neighbours [p]
   (let [x (:x p) y (:y p)]
@@ -73,7 +72,7 @@
         (mouseClicked [e] 
           (if (= (MouseEvent/BUTTON1) (.getButton e))
 	    (let [sq-size (/ (min (.getHeight canvas) (.getWidth canvas)) grid-size) x (int (/ (.getX e) sq-size)) y (int (/ (.getY e) sq-size))]
-	      (swap! *world* (fn [w] (toggle-pos w x y))))
+	      (swap! *world* (fn [w] (toggle-pos w (struct point x y)))))
 	    (swap! *world* (fn [w] (life-step w))))
 	  (.repaint canvas)))))
     (doto frame
