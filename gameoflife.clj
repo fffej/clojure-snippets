@@ -16,7 +16,6 @@
   (get world point))
 
 (defn toggle-pos [world point]
-  (prn (world-at world point))
   (if (zero? (world-at world point))
     (assoc world point 1)
     (assoc world point 0)))
