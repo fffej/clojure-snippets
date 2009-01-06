@@ -17,9 +17,10 @@
   (get world point))
 
 (defn toggle-pos [world point]
-  (if (nil? (world-at world point))
+  (prn (world-at world point))
+  (if (zero? (world-at world point))
     (assoc world point 1)
-    (dissoc world point)))
+    (assoc world point 0)))
 
 (defn neighbours [p]
   (let [x (:x p) y (:y p)]
@@ -40,18 +41,16 @@
      :else 0)))
 
 (defn life-step [w]
-  (let [width (count w) height (count (first w))]
-    (map 
-     (fn [row] (map (fn [col] 
-		      (let [x (first row) y (first col)]
-			(new-state w x y)))
-		    (zipmap (range 0 height) (second row))))
-     (zipmap (range 0 width) w))))
+  w)
+
+(defn create-world [w h]
+  (let [x (range 0 w) y (range 0 h)]
+    (apply hash-map (mapcat (fn [a] (mapcat (fn [b] (list (struct point a b) 0))  y)) x))))
 
 ;; UI elements and mutable ness
 (def grid-size 15)
 
-(def *world* (atom (hash-map)))
+(def *world* (atom (create-world grid-size grid-size)))
 
 (def canvas (proxy [JPanel] []
   (paintComponent [g]
@@ -60,12 +59,12 @@
       (doseq [y (range 0 grid-size)]
 	(let [alive (world-at @*world* (struct point x y)) sq-size (/ (min (.getHeight this) (.getWidth this)) grid-size)]
 	  (cond
-	   (nil? alive) (.setColor g Color/BLUE)
+	   (zero? alive) (.setColor g Color/BLUE)
 	   :else (.setColor g Color/RED))
 	  (.fillRect g (* x sq-size) (* y sq-size) (dec sq-size) (dec sq-size))))))))
 
 (defn lifeapp []
-  (swap! *world* (fn [w] (hash-map)))
+  (swap! *world* (fn [w] (create-world grid-size grid-size)))
   (let [frame (JFrame. "Game of Life")]
     (doto canvas
       (.addMouseListener (proxy [MouseAdapter] []
