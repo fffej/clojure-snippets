@@ -5,7 +5,6 @@
        '(java.awt.event ActionListener MouseListener MouseAdapter MouseEvent)
        '(java.awt GridLayout Color))
 
-
 ;; Rules from Wikipedia
 ;; 1. Any live cell with fewer than two live neighbours dies, as if by needs caused by underpopulation.
 ;; 2. Any live cell with more than three live neighbours dies, as if by overcrowding.
@@ -26,7 +25,7 @@
   (let [x (:x p) y (:y p)]
     [(struct point (dec x) (dec y)) (struct point x (dec y)) (struct point (inc x) (dec y))
      (struct point (dec x) y) (struct point (inc x) y)
-     (struct point (inc x) (inc y)) (struct point x (inc y)) (struct point (inc x) (dec y))]))
+     (struct point (dec x) (inc y)) (struct point x (inc y)) (struct point (inc x) (inc y))]))
 
 (defn neighbour-count [world p]
   (reduce + (map (fn [x] (let [v (world-at world x)] (if (nil? v) 0 v))) (neighbours p))))
@@ -41,14 +40,14 @@
      :else 0)))
 
 (defn life-step [w]
-  w)
+  (into (hash-map) (map (fn [x] [(first x) (new-state w (first x))]) w)))
 
 (defn create-world [w h]
   (let [x (range 0 w) y (range 0 h)]
     (apply hash-map (mapcat (fn [a] (mapcat (fn [b] (list (struct point a b) 0))  y)) x))))
 
 ;; UI elements and mutable ness
-(def grid-size 15)
+(def grid-size 2)
 
 (def *world* (atom (create-world grid-size grid-size)))
 
