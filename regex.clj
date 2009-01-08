@@ -5,29 +5,35 @@
 
 (import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel BoxLayout)
        '(java.awt.event ActionListener KeyAdapter)
-       '(javax.swing.text DefaultHighlighter)
+       '(java.util.regex PatternSyntaxException)
+       '(javax.swing.text DefaultHighlighter$DefaultHighlightPainter)
        '(java.awt GridLayout Color))
 
-;; TODO exeption handling
+;; Should be a macro
+(defn first-match [m]
+  (if (coll? m) (first m) m))
+
 (defn match [regex text]
-  (let [match (re-find (re-pattern regex) text)]
-    (if (nil? match)
+  (let [m (first-match (re-find (re-pattern regex) text))]
+    (if (nil? m)
       [0 0]
-      (let [ind (.indexOf text match)]
-	[ind (+ ind (.length match))]))))
+      (let [ind (.indexOf text m) len (.length m)]
+	[ind (+ ind len)]))))
 
 (defn regexcoach []
   (let [frame (JFrame. "Regular Expression Coach") pane (JPanel.) regexText (JTextField.) 
-	targetText (JTextField.)
+	targetText (JTextField. "")
 	statusBar (JLabel. "Match from 0 to 0")
         keyHandler (proxy [KeyAdapter] [] 
 		     (keyTyped [keyEvent] 
-		       (let [m (match (.getText regexText) (.getText targetText)) 
-			     hl (.getHighlighter targetText)
-			     pen (DefaultHighlighter$DefaultHighlightPainter. Color/RED)]
-			 (.removeAllHighlights hl)
-			 (.addHighlight hl (first m) (second m) pen)
-			 (.setText statusBar (format "Match from %s to %s" (first m) (second m))))))]
+		       (try       
+			(let [m (match (.getText regexText) (.getText targetText)) 
+			      hl (.getHighlighter targetText)
+			      pen (DefaultHighlighter$DefaultHighlightPainter. Color/RED)]
+			  (.removeAllHighlights hl)
+			  (.addHighlight hl (first m) (second m) pen)
+			  (.setText statusBar (format "Match from %s to %s" (first m) (second m))))
+			(catch PatternSyntaxException e (.setText statusBar (.getMessage e))))))]
     (doto regexText
       (.addKeyListener keyHandler))
     (doto targetText
