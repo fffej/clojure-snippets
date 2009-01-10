@@ -33,10 +33,6 @@
 (defn generate-text [example n & [start]]
   (let [words (file-as-wordlist example) fm (build-frequency-map words)
         start-word (if (nil? start) "the" start)]
-    ((fn [last-word count accum]
-       (if (zero? count)
-	 accum
-	 (let [next-word (next fm last-word)]
-	   (recur next-word (dec count) (conj accum (next fm last-word)))))) start-word n '())))
+    (take n (iterate (fn [x] (next fm x)) start-word))))
     
   
