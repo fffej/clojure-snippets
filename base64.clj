@@ -15,16 +15,17 @@
 
 (defn str-pad [x size padchar]
   (let [d (rem (count x) size)]
-    x
-    (apply str x (take (- size d) (repeat padchar)))))
+    (if (zero? d)
+      x
+      (concat x (take (- size d) (repeat padchar))))))
 
 		   
 ; Need to implement padding
 (defn encode 
   "Lazily encode a sequence as base64"
-  [seq]
-  (if (nil? seq)
+  [s]
+  (if (nil? s)
     nil
-    (let [x (map int (str-pad (take 3 seq) 3 \=))
-	  num (+ (last x) (* 256 (second x)) (* 256 256 (first x)))]
-      (lazy-cons (encode-num num) (encode (drop 3 seq))))))
+    (let [x (map int (str-pad (take 3 s) 3 \=))
+	  num (+ (nth x 2) (* 256 (nth x 1)) (* 256 256 (first x)))]
+      (lazy-cat (encode-num num) (encode (drop 3 s))))))
