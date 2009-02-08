@@ -20,7 +20,6 @@
       (concat x (take (- size d) (repeat padchar))))))
 
 		   
-; Need to implement padding
 (defn encode 
   "Lazily encode a sequence as base64"
   [s]
