@@ -23,8 +23,7 @@
 (defn encode 
   "Lazily encode a sequence as base64"
   [s]
-  (if (nil? s)
-    nil
+  (when-not (nil? s)
     (let [x (map int (str-pad (take 3 s) 3 \=))
 	  num (+ (nth x 2) (* 256 (nth x 1)) (* 256 256 (first x)))]
       (lazy-cat (encode-num num) (encode (drop 3 s))))))
