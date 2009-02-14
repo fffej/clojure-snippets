@@ -1,18 +1,7 @@
 ;;; Huffman encoding
 ;;; jeff.foster@acm.org
-(defn inc-weight 
-  [weight symbol]
-  (if (contains? weight symbol)
-    (assoc weight symbol (inc (get weight symbol)))
-    (assoc weight symbol 1)))
-
-(defn symbol-weights
-  "Given a list produce a set of symbol weights"
-  [s]
-  ((fn [p weights]
-     (if (nil? p)
-       weights
-       (recur (rest p) (inc-weight weights (first p))))) s {}))
+(ns huffman
+  (:use clojure.contrib.seq-utils))
 
 (defn- sort-by-second [a b]
   (< (second a)(second b)))
@@ -78,3 +67,4 @@
 (defn compress 
   [s table]
   (mapcat (partial get table) s))
+
