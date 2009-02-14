@@ -61,7 +61,7 @@
 (defn huffman-coding-table
   "Huffman encode the given sequence and return the huffman coding tree"
   [s]
-  (let [fl (map list (sort sort-by-second (map (fn [x] [(first x) (second x)]) (symbol-weights s))))]
+  (let [fl (map list (sort sort-by-second (map (fn [x] [(first x) (second x)]) (frequencies s))))]
     (lookup (coding-tree fl))))
 
 (defn compress 
