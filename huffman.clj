@@ -17,14 +17,22 @@
 (defn- sort-by-second [a b]
   (< (second a)(second b)))
 
-(defn- sort-tree-node [a b]
-  (sort-by-second (first a) (first b)))
-
 (defn node-sum [a b]
   [\* (+ (second a) (second b))])
 
 (defn tree-node [a b]
   (list (node-sum (first a) (first b)) a b))
+
+(defn add-to-queue
+  "Insert a new node, n, into an ordered list open"
+  [n open]
+  (if (nil? open)
+    (list n)
+    (let [nval (second (first n))
+	  oval (second (first (first open)))]
+      (if (>= nval oval)
+	(lazy-cons (first open) (add-to-queue n (rest open)))
+	(lazy-cons n open)))))
 
 ;   1. Create a leaf node for each symbol and add it to the priority queue.
 ;   2. While there is more than one node in the queue:
@@ -37,7 +45,7 @@
   [open]
   (if (> (count open) 1)
     (let [new-node (apply tree-node (take 2 open))]
-      (recur (sort sort-tree-node (cons new-node (drop 2 open))))) ; gratuitously inefficient!
+      (recur (add-to-queue new-node (drop 2 open))))
     (first open)))
 
 (defn left-node [tree]
@@ -66,3 +74,7 @@
   [s]
   (let [fl (map list (sort sort-by-second (map (fn [x] [(first x) (second x)]) (symbol-weights s))))]
     (lookup (coding-tree fl))))
+
+(defn compress 
+  [s table]
+  (mapcat (partial get table) s))
