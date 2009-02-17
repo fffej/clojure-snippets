@@ -10,10 +10,8 @@
 	      (let [w1 (first v) w2 (second v) val (get accum w1)]
 		(if (nil? val)
 		  (assoc accum w1 {w2 1})
-		  (let [currentVal (get val w2)]
-		    (if (nil? currentVal)
-		      (assoc accum w1 (conj val {w2 1}))
-		      (assoc accum w1 (conj val {w2 (inc currentVal)})))))))
+		  (let [currentVal (get val w2 0)]
+		    (assoc accum w1 (conj val {w2 (inc currentVal)}))))))
 	    {} word-pairs)))
 
 (defn frequency-map-count [m word]
