@@ -12,7 +12,7 @@
    (= + op) true
    (= - op) (> a b)
    (= * op) true
-   (= / op) (= 0 (mod a b))))
+   (= / op) (= (mod a b) 0)))
 
 (defstruct node :expression :value)
 
@@ -50,12 +50,19 @@
 	   remd (drop 2 x)]
        (mapcat make-expressions-helper (map (fn [x] (cons x remd)) exps)))))
 
+(defn drop-one 
+  "All combinations of a lst without one element"
+  [lst]
+  (let [v (into [] lst) size (count v)]
+    (map (fn [x] (concat (subvec v 0 (dec x)) (subvec v x)))  (range 1 (inc size)))))
+  
+
 (defn make-expressions [lst]
   (if (nil? lst)
     nil
     (lazy-cat
      (mapcat make-expressions-helper (permutations lst))
-     (make-expressions (rest lst)))))
+     (mapcat make-expressions (drop-one lst)))))
 
 (defn solve 
   "Solve the countdown problem"
