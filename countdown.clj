@@ -5,7 +5,7 @@
   (:use clojure.contrib.combinatorics)
   (:use clojure.contrib.seq-utils))
 
-(def *operators* [+ - / *])
+(def *operators* ['+ '- '/ '*])
 
 (defn is-valid [op a b]
   (cond 
@@ -17,7 +17,7 @@
 (defn expr 
   "A list of expressions for a and b"
   [a b]
-  (map (fn [x] (x a b)) *operators*))
+  (map (fn [x] (list x a b)) *operators*))
 
 (defn expressions-helper 
   "Given a lst, build up all valid Countdown expressions"
