@@ -1,9 +1,10 @@
 ;;; Implementation of the Game of Life
 ;;; jeff.foster@acm.org
 
-(import '(javax.swing JFrame JLabel JTextField JButton JComboBox JPanel Timer)
-       '(java.awt.event ActionListener MouseListener MouseAdapter MouseEvent)
-       '(java.awt GridLayout Color))
+(ns game-of-life
+  (:import (javax.swing JFrame JLabel JTextField JButton JComboBox JPanel Timer))
+  (:import (java.awt.event ActionListener MouseListener MouseAdapter MouseEvent))
+  (:import (java.awt GridLayout Color)))
 
 ;; Rules from Wikipedia
 ;; 1. Any live cell with fewer than two live neighbours dies, as if by needs caused by underpopulation.
