@@ -1,5 +1,6 @@
 (ns jmusic
   (:use [clojure.contrib.import-static :only (import-static)])
+  (:use [game-of-life])
   (:import jm.JMC)
   (:import (jm.util Write))
   (:import (jm.music.data Note Score Part Phrase)))
