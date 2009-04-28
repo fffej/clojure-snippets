@@ -26,6 +26,9 @@
 ;;;    3. save formatted
 ;;; 6. exit
 
+(defn add
+  "Add two vectors together"
+  [v1 v2] (map + v1 v2))
 
 (defn dot 
   "Dot product of two vectors"
@@ -116,15 +119,19 @@
 (defn create-image 
   [model]
   (let [w (:width model) h (:height model)]
-    (struct image w h (vec (repeat (* w h) 0)))))
+    (struct image w h (vec (repeat (* w h) [0 0 0])))))
 
 (defn add-pixel
   [image x y radiance]
-  (let [w (:width image) h (:height image) p (:pixels image)]
-  (struct image 
-	  w
-	  h
-	  3)))
+  (let [w (:width image) 
+	h (:height image) 
+	p (:pixels image)
+	i (+ x (* (- h 1 y) w))]
+    (struct image
+	    w
+	    h
+	    (assoc p i (add (get p i) radiance)))))
+     
 
 (defn get-sample-ray-direction
   "Make sample ray direction, stratified by pixels"
@@ -134,14 +141,18 @@
 	xf (- (* (/ 2.0 w) (+ px (rand))) 1)
 	yf (- (* (/ 2.0 h) (+ py (rand))) 1)]
     1))
+
+(defn get-radiance
+  [origin direction])
     
-
-
 (defn render-point
   "Render the point in the model at (x,y) and return the radiance"
   [model px py]
   (let [xf (- (* (/ 2.0 (:width  model)) (+ px (rand))) 1)
 	yf (- (* (/ 2.0 (:height model)) (+ py (rand))) 1)]
+    ;; Get Radiance from ray tracer
+
+    ;; Add radiance to image and return new image
     4))
   
 
