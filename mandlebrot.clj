@@ -6,8 +6,8 @@
 	'(java.awt.image BufferedImage MemoryImageSource))
 
 (def *max-iteration* 256)
-(def *width* 128)
-(def *height* 128)
+(def *width* 1024)
+(def *height* 1024)
 
 (defn process-pixel [x y]
   ((fn [x y xc yc accum]
@@ -19,15 +19,27 @@
 	(> sq 2.0) accum
 	:else (recur x1 y1 xc yc (inc accum))))) x y x y 0))
 
-(defn calculate-pixels ]
-  (let [pixels (range 0 (* *width* *height*))]
-    (pmap (fn [p] 
-	    (let [row (rem p *width*) col (int (/ p *height*))]
-	      (get-color (process-pixel (/ row (double *width*)) (/ col (double *height*))))))
-	  pixels)))
-
 (defn get-color [pixel]
   (Color/HSBtoRGB (/ (double pixel) *max-iteration*) 0.5 0.75))
+
+(defn calculate-pixels []
+  (let [pixels (range 0 (* *width* *height*))]
+    (doall (pmap (fn [p] 
+	    (let [row (rem p *width*) col (int (/ p *height*))]
+	      (get-color (process-pixel (/ row (double *width*)) (/ col (double *height*))))))
+	  pixels))))
+
+(defn calculate-pixels-2 []
+  (let [n (* *width* *height*)
+	work (partition (/ n 16) (range 0 n))
+	result (pmap (fn [x]
+		   (doall (map 
+		    (fn [p]
+		      (let [row (rem p *width*) col (int (/ p *height*))]
+			(get-color (process-pixel (/ row (double *width*)) (/ col (double *height*))))))
+		    x)))
+		   work)]
+    (apply concat result)))
 
 (defn simple-mandlebrot [w h]
   (let [x (int-array (calculate-pixels))]
@@ -43,5 +55,5 @@
   (let [frame (JFrame. "Fractals")]
     (doto frame
       (.add canvas)
-      (.setSize 128 128)
+      (.setSize 512 512)
       (.setVisible true))))

@@ -32,9 +32,9 @@
     (/ (- c) b)
     (let [disc (- (square b) (* 4 a c))]
       (if (> disc 0)
-	(let [discroot (Math/sqrt disc)]
-	  (min (/ (+ (- b) discroot) (* 2 a))
-	       (/ (- (- b) discroot) (* 2 a))))))))
+        (let [discroot (Math/sqrt disc)]
+          (min (/ (+ (- b) discroot) (* 2 a))
+               (/ (- (- b) discroot) (* 2 a))))))))
 
 ;; Ray tracing bits
 (def eye (struct point 150 150 200))
@@ -56,9 +56,10 @@
 (defn sphere-intersect [s pt ray]
   (let [c (:centre s)
 	n (minroot (+ (square (:x ray)) (square (:y ray)) (square (:z ray)))
-		   (* 2 (+ (* (- (:x pt) (:x c)) (:x ray))
-			   (* (- (:y pt) (:y c)) (:y ray))
-			   (* (- (:z pt) (:z c)) (:z ray))))
+		   (* 2 (+ 
+                 (* (- (:x pt) (:x c)) (:x ray))
+                 (* (- (:y pt) (:y c)) (:y ray))
+                 (* (- (:z pt) (:z c)) (:z ray))))
 		   (+ (square (- (:x pt) (:x c)))
 		      (square (- (:y pt) (:y c)))
 		      (square (- (:z pt) (:z c)))
@@ -71,8 +72,8 @@
 (defn lambert [s intersection ray]
   (let [normal (sphere-normal s intersection)]
     (max 0 (+ (* (:x ray) (:x normal))
-	      (* (:y ray) (:y normal))
-	      (* (:z ray) (:z normal))))))
+              (* (:y ray) (:y normal))
+              (* (:z ray) (:z normal))))))
 
 ;; second item = what we hit
 ;; first item = where we hit
